@@ -28,9 +28,4 @@
       (append (tsil (cdr l)) (list (car l)))))
 
 ;; list-flattening function
-(define (flatten L)
-  (cond
-    [(null? L) L]
-    [(not (list? L)) (list L)]
-    [else (append (flatten (car L)) (flatten (cdr L)))]))
 ;; merge-sorting-lists function
