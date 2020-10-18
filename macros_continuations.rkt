@@ -53,29 +53,7 @@
     (mywhile)))
 
 
-(define *paths* '())
-(define fail #f)
-
-(define (choose l)
-  (if (null? l) (fail) 
-    (call/cc (lambda(cc) 
-      (set! *paths* (cons (lambda() 
-          (cc (choose (cdr l)))) 
-            *paths*)) 
-            (car l)))))
-
-;; the continuations for the fail branch
-
-(define (is-the-sum-of n)
-  (unless (and (>= n 0) (<= n 10))
-    (error "out of range " n))
-    (let ((x (choose '(0 1 2 3 4 5 6))
-          (y (choose '(0 1 2 3 4 5 6)))
-          (if (= (+ x y) n) (list x y) (fail))))))
-
-
-
-
+;; simple call/cc usage
 (define (break-negative l)
   (call/cc (lambda (break)
     (for-each (lambda(x)
@@ -87,5 +65,30 @@
       if (> x 0) (displayln x) (env)
     ))
   )) l))
+
+;; backtracking choices
+(define *paths* '())
+(define fail #f)
+(define (choose l)
+  (if (null? l) 
+    (fail)
+    (call/cc
+      (lambda(cc)
+        (set! *paths* (cons 
+          (lambda()
+            (cc (choose (cdr l))))
+          *paths*))
+        (car l)))))
+
+(define (is-the-sum-of n)
+  (unless (and (>= n 0) (<= n 10)) (error "Out of range"))
+  (let ((x (choose '(1 2 3 4 5)))
+        (y (choose '(1 2 3 4 5))))
+      (if (= (+ x y) n) 
+        (list x y)
+        (fail)))
+)
+
+
 
 
