@@ -89,6 +89,17 @@
         (fail)))
 )
 
+;; main
+(call/cc 
+  (lambda(exit)
+    (set! fail 
+      (lambda() 
+        (if (null? *paths*)
+        (exit 'end)
+        (let((p1 (car *paths*))
+          (set! *paths* (cdr *paths*))
+          (p1))))))))
+
 
 
 
