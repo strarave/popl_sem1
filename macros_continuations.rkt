@@ -69,6 +69,7 @@
 ;; backtracking choices
 (define *paths* '())
 (define fail #f)
+
 (define (choose l)
   (if (null? l) 
     (fail)
