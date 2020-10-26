@@ -1,20 +1,22 @@
 #lang racket
 
-(define queue '())
-(define (enqueue x)
-    (set! queue (append queue (list x))))
-(define (dequeue) (unless (null? queue)
-    (let ((x (car queue))) 
-        (set! queue (cdr queue))
-        x)))
+;; the stored function
+(define stored #f)
 
-(define (start-coroutine proc)
-    (call/cc 
-        lambda(cc)
-        (enqueue cc)
-        (proc)))
-
+;; function to yield the execution to a saved block
 (define (yield)
-    (call/cc 
-        (enqueue cc)
-        ((dequeue))))
+    (call/cc(
+        lambda(cc)
+            (stored)
+            (cc)
+    )))
+
+;; test function
+(define (yield-test)
+    (displayln "prima")
+    (yield)
+    (displayln "dopo"))
+
+;; main
+(set! stored (lambda() (displayln "stored")))
+(yield-test)
