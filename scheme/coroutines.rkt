@@ -1,6 +1,6 @@
 #lang racket
 
-;; the function stack (FIFO manged list of lambdas)
+;; the function stack (LIFO manged list of lambdas)
 (define *stack* '())
 
 ;; function to save a lambda on top of the stack

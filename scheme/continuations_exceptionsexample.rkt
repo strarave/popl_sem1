@@ -2,19 +2,21 @@
 
 ;; try catch structure
 (define-syntax try
-    (syntax-rules (catch) ;; the construct must know the exception to be catched and the handler
-        ((_ exp ... (catch what hand ...))
+    (syntax-rules (catch finally) ;; the construct must know the exception to be catched and the handler
+        ((_ exp ... (catch what hand ...) (finally f ...))
         (call/cc (lambda (exit)
             (push-handler (
                 lambda(x)
                     (if (equal? x what)
-                        (exit (begin hand ...))
+                        (exit (begin hand ...) (begin f ...))
                         (throw x)
                     )
             ))
             (let((res (begin exp ...)))
                 (pop-handler)
-                res))))))
+                res
+                (begin f ...))))
+            )))
 
 ;; throw procedure
 (define (throw x)
@@ -31,18 +33,25 @@
         (set! *handlers* (cdr *handlers*))
         ret))
 
-(define (dummy-thrower)
+(define (throw-function)
     (displayln "no throw")
     (throw "throw")
     (displayln "throwed"))
 
+(define (finally-function)
+    (displayln "fucking finally"))
+
 ;; main
-(try 
-    (displayln "before")
-    (dummy-thrower)
-    (displayln "after")
-    (catch "throw" 
-        (displayln "catched")
-    )
-)
-(displayln "fucking finally")
+(try
+    (displayln "before throwing...")
+    (throw-function)
+    (catch "throw"
+        (displayln "catched"))
+    (finally 
+        (finally-function)))
+(try
+    (displayln "no throw this time")
+    (catch "throw"
+        (displayln "catched"))
+    (finally 
+        (finally-function)))
