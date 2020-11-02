@@ -1,6 +1,6 @@
 module DATATYPES where
-    data Tree a = Leaf a | Branch (Tree a) (Tree a)
+    import TreeADT
+    data Point = Point Float Float
 
-    fringe :: Tree a -> [a]
-    fringe (Leaf x) = [x]
-    fringe (Branch l r) = fringe l ++ fringe r 
+    pointY (Point _ y) = y
+    pointX (Point x _) = x
