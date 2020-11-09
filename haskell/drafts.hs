@@ -11,6 +11,11 @@ inject :: (a -> a -> a) -> [a] -> a
 inject f (x:(xs:[])) = f x xs 
 inject f (x:(xs:xss)) = f (f x xs) (inject f xss)
 
+-- BUT i can ask the the user a first value
+betterInject :: (a -> a -> a) -> a -> [a] -> a
+betterInject f start [] = start
+betterInject f start (h:t) = f h (betterInject f start t)
+
 -- map implementation
 traspose :: (a -> b) -> [a] -> [b]
 traspose _ [] = []
