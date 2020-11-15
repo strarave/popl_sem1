@@ -30,18 +30,18 @@ toList Empty = []
 toList (End a b) = ((a:(b:[])):[])
 toList (Next a b n) = ((a:(b:[])):(toList n))
 
--- fold
+-- FOLD
 instance Foldable Path where
   foldr f z (End a b) = f b $ f a z
   foldr f z (Next a b n) = f a $ f b $ foldr f z n
 
--- map
+-- MAP
 instance Functor Path where
   fmap f (End a b) = End (f a) (f b)
   fmap f (Next a b n) = Next (f a) (f b) (fmap f n)
 
--- journey to applicative: path concat, path concatMap
--- path concatenation
+-- path concatenation: it's just and append function for paths
+-- and the implementation is the most intuitive
 pconcat :: (Path a) -> (Path a) -> (Path a)
 pconcat Empty p = p
 pconcat p Empty = p
@@ -52,5 +52,15 @@ pconcat (Next a b n) z = (Next a b (pconcat n z))
 pconc :: (Path a) -> (Path a)
 pconc p = pconcat Empty p
 
--- path concatMap
--- ...
+-- path flatten: from a "path of paths" this function extracts all annidated paths
+-- and concatenate them
+pflatten :: Path (Path a) -> Path a
+pflatten Empty = Empty
+pflatten (End p1 p2) = pconcat p1 p2
+-- the pattern for "Next" should take account of all possible nesting
+pflatten (Next p1 p2 n) = pconcat p1 $ pconcat p2 $ pconc $ pflatten n
+
+-- applicative instance
+instance Applicative Path where
+  pure a = End a a 
+  fp <*> dp = pflatten $ fmap (\f -> fmap f dp) fp
