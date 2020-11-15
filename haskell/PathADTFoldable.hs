@@ -60,7 +60,7 @@ pflatten (End p1 p2) = pconcat p1 p2
 -- the pattern for "Next" should take account of all possible nesting
 pflatten (Next p1 p2 n) = pconcat p1 $ pconcat p2 $ pconc $ pflatten n
 
--- applicative instance
+-- APPLICATIVE
 instance Applicative Path where
   pure a = End a a 
   fp <*> dp = pflatten $ fmap (\f -> fmap f dp) fp
