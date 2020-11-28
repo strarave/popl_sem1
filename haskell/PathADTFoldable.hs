@@ -58,3 +58,8 @@ pflatten (Next p1 p2 n) = pconcat p1 $ pconcat p2 $ pconc $ pflatten n
 instance Applicative Path where
   pure a = (Next a a Empty)
   fp <*> dp = pflatten $ fmap (\f -> fmap f dp) fp
+
+-- MONAD
+instance Monad Path where
+  return = pure
+  p >>= f = pflatten $ fmap f p
