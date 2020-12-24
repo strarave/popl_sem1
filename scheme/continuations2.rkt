@@ -26,3 +26,25 @@
                 (set! lst (cdr lst))
                 (loop x)
     ))))
+
+(define (wrong-backtrack)
+    (call/cc(
+        lambda(back)
+            (let ((x (random 100)))
+                (if (> x 50)
+                    (displayln x)
+                    (back)
+                )
+            )
+    )) 
+)
+
+(define (backtrack)
+    (call/cc(
+        lambda(cont)
+            (let ((x (random 100)))
+                (if (> x 50)
+                    (displayln x)
+                    (backtrack))
+            )
+    )))

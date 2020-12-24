@@ -25,46 +25,62 @@
 
 (define (make-engine proc)
     (let ((do-complete #f) (do-expire #f))
-        ;; most "external" function. 
-        (define (handler) (start-timer (call/cc do-expire) handler))
+        (displayln "entering make-engine")
 
-        ;; main function
+        (define (handler) 
+            (displayln "entering handler")
+            ;; WATCH OUT the (call/cc do-expire) is EVALUATED! so its content is executed before the "start-timer" execution
+            (start-timer (call/cc do-expire) handler))
+
         (define (new-engine start-engine)
             (lambda (ticks complete expire)
+                (displayln "evaluating new-engine")
                 (let ((exec-end (
                     ;; this callcc sets the return point for both success and expired scenarios 
                     call/cc (
                         lambda (escape)
+                            (displayln "setting expire and complete procedures")
                             (set! do-complete 
-                                (lambda (remaining-ticks result) (escape (lambda() (complete remaining-ticks result))))
+                                (lambda (remaining-ticks result) 
+                                    (displayln "completing")
+                                    (escape (lambda() (complete remaining-ticks result))))
                                 )
                             (set! do-expire 
-                                (lambda (resume) (escape (lambda() (expire (new-engine resume)))))
+                                (lambda (resume)
+                                    (displayln "expired") 
+                                    (escape (lambda() (expire (new-engine resume)))))
                                 )
                             (start-engine ticks)
                     )
                 )))
+                (displayln "body of new-engine, executing exec-end")
                 (exec-end))))
 
         ;; still make-engine's body
-        (new-engine (lambda (ticks) 
+        (new-engine (lambda (ticks)
+            (displayln "starting timer") 
             (start-timer ticks handler)
 
+            (displayln "executing")
             (let ((result (proc)))
                 ;; collection of remaining ticks if task completes successfully
+                (displayln "here, the computing is completed successfully.")
                 (let ((remaining-ticks (stop-timer)))
                     (do-complete remaining-ticks result))))
             )
         )
     )
 
-;; put some displays around
-;; implement a recursive function that calls decrease-timer (factorial goes well)
-;; we can redefine the syntax for lambdas to include decrease timer automatically
-
 (define (factorial n)
+    (displayln "decreasing timer")
     (decrease-timer)
     (if (<= n 0) 
         1
         (* n (factorial (- n 1))))
 )
+
+(define fact-engine (make-engine(lambda()(factorial 10))))
+(define (fact-resume res)
+    (set! fact-engine res))
+
+;; we can redefine the syntax for lambdas to include decrease timer automatically
