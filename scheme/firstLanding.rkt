@@ -21,16 +21,17 @@
           (s (cdr p)))
      (cons s f)))
 
-;; list-reversing function
-(define (tsil l)
-  (if (null? l) 
-      l
-      (append (tsil (cdr l)) (list (car l)))))
-
 ;; list-flattening function
 (define (flatten L)
   (cond
     [(null? L) L]
     [(not (list? L)) (list L)]
     [else (append (flatten (car L)) (flatten (cdr L)))]))
-;; merge-sorting-lists function
+
+;; list reversing function
+(define (tsil l)
+    (if (= (length l) 1) 
+        (car l)
+        (list (tsil (cdr l)) (car l))
+    )
+)
