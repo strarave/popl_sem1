@@ -23,3 +23,11 @@
         )
     )    
 )
+
+;; simple example of for-each use
+;; also, a vector-for-each exists
+(define (print-list L)
+    (for-each (
+        lambda(x) (displayln x)
+    ))
+)
