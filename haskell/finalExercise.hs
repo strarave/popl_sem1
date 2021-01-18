@@ -29,7 +29,7 @@ module FINALEXERCISE where
         (Left f) <*> _ = Left f
         (Right f) <*> r = fmap f r
     
-    instance Monda (Either a) where
+    instance Monad (Either a) where
         return = pure
         (Right x) >>= f = f x
         (Left x) >>= _ = Left x
