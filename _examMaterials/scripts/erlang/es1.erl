@@ -27,7 +27,7 @@ cdr([_ | X]) -> X.
 
 %% typical functional procedures
 map(_, []) -> [];
-map(F, [X |Xs]) -> [F(X) | map(F, Xs)].
+map(F, [X |Xs]) -> [F(X) | map(F, Xs)]. % list comprehension!
 
 foldr(_, Acc, []) -> Acc;
 foldr(F, Acc, [X | Xs]) -> F(X, foldr(F, Acc, Xs)).
